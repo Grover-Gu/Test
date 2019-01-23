@@ -1,0 +1,18 @@
+查数据库死锁表
+select /*+ rule */ s.username,
+      decode(l.type,'TM','TABLE LOCK','TX','ROW LOCK',null) lock_level,
+      o.owner,
+      o.object_name,
+      o.object_type,
+      s.sid,s.serial#,
+      s.terminal,
+      s.machine,
+      s.program,
+      s.osuser
+from v$session s,v$lock l,dba_objects o
+where l.sid = s.sid
+and l.id1 = o.object_id(+)
+and s.username='HIS66'
+
+杀死锁表进程
+alter system kill session '127,3671';
